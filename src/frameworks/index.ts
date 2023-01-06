@@ -5,7 +5,7 @@ import { readdirSync, statSync } from "fs";
 import { pathToFileURL } from "url";
 import { IncomingMessage, ServerResponse } from "http";
 import { copyFile, readdir, rm, writeFile } from "fs/promises";
-import { mkdirp, pathExists, stat } from "fs-extra";
+import { copy, mkdirp, pathExists, stat } from "fs-extra";
 import * as clc from "colorette";
 import * as process from "node:process";
 import * as semver from "semver";
@@ -521,6 +521,10 @@ ${firebaseDefaults ? `__FIREBASE_DEFAULTS__=${JSON.stringify(firebaseDefaults)}\
 
       if (await pathExists(getProjectPath(".npmrc"))) {
         await copyFile(getProjectPath(".npmrc"), join(functionsDist, ".npmrc"));
+      }
+
+      if (await pathExists(getProjectPath(".packages"))) {
+        await copy(getProjectPath(".packages"), join(functionsDist, ".packages"));
       }
 
       execSync(`${NPM_COMMAND} i --omit dev --no-audit`, {
